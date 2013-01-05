@@ -14,6 +14,14 @@
 		self.getIdByCell = self.getIdByCell || function(cell) {
 			return board.getIdByCell(cell);
 		}
+		self.drawPieceByCoordinates = function(x,y,piece){
+		    for(i=0; i<board.cells.length; i++){
+				var cell=board.cells[i];
+		        if(cell.column===x && cell.row===y){
+					board.drawPiece(cell,piece);
+				}
+			}
+		}
 	}
 })();
 
