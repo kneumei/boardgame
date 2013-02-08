@@ -1,45 +1,27 @@
 var express = require('express')
-  , app = express()
-  , http = require('http')
-  , server = http.createServer(app)
-  , io = require('socket.io').listen(server);
+var app = express();
+var MemoryStore = require('connect').session.MemoryStore;
+var http = require('http');
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
 
-app.use("/css",express.static(__dirname+'/css'));
-app.use("/images",express.static(__dirname+'/images'));
-app.use("/js",express.static(__dirname+'/js'));
-app.use("/node_modules",express.static(__dirname+'/node_modules'));
-
-app.get('/', function(req,res){
-  res.sendfile(__dirname+'/game.htm');
-});
-
-io.set('polltimeout','3000');
-
-var white=null;
-var black=null;
-io.sockets.on('connection', function (socket) {
-  
-  if(!black){
-    if(!white){
-    white=socket;
-    console.log('white connected');
-    }else{
-    black=socket;
-    console.log('black connected');
-    }
-  }
-
-  socket.on('move', function (data) {
-    if(socket===white && black!=null){
-      black.emit('move',data);
-      console.log('sending message to black');
-    }
-    if(socket==black && white!=null){
-      white.emit('move',data);
-      console.log('sending message to white');
-    }
+app.configure(function(){
+  app.set('view engine', 'jade');
+  app.use(express.static(__dirname + '/public'));
+  app.use(express.limit('1mb'));
+  app.use(express.bodyParser());
+  app.use(express.cookieParser());
+  app.use(express.session({secret: "secret key", store: new MemoryStore()}));
   });
 
+app.get('/', function(req,res){
+  res.render('index.jade');
+});
+
+io.sockets.on('connection', function(socket){
+	socket.on('newgame', function(data){
+		console.log("New Game! ");
+	});
 });
 
 server.listen(8080);

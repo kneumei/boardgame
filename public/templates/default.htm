@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Boardgame: Chess</title>
+	<link rel="stylesheet" href="css/main.css" type="text/css">
+</head>
+<body>
+	<canvas id="main"></canvas>
+	<canvas id="foobar"></canvas>
+  <script src="js/boardgame.js"></script>
+  <script src="socket.io/socket.io.js"></script>
+	<script type="text/javascript">
+
+		var canvas = document.getElementById('main');
+		canvas.toBoard({
+			//width: 'auto',
+			//height: 'auto',
+			cellWidth: 80,
+			cellHeight: 80,
+			columns: 3,
+			rows: 3,
+			showGridLines: true,
+			gridLineColor: '#fff',
+			backgroundColor: 'black',
+			cellColor: 'yellow',
+			alternateCellColor: 'lime',
+			useAlgebraicNotation: true
+		});
+
+    var socket = io.connect('http://localhost');
+
+		var a = [];
+		var b = [];
+		var sumOfAx, sumOfAy, sumOfBx, sumOfBy = 0;
+		var isGameOver = false;
+		canvas.onCellClick(function(e) {
+			if (!isGameOver && e.board.numberOfPieces < 10) {
+				if (e.isEmpty) {
+					if (e.board.numberOfPieces % 2 === 0) {
+						canvas.drawPiece(e.cell, 'images/home2.png');
+            a.push(e.cell);
+            socket.emit('move', {cell:e.cell})
+					}
+					else {
+						canvas.drawPiece(e.cell, 'images/danger.png');
+						b.push(e.cell);
+            socket.emit('move', {cell:e.cell})
+					}
+
+                    if (e.board.numberOfPieces > 3) {
+                        var ah0 = a.horizontal(0);
+                        var ah1 = a.horizontal(1);
+                        var ah2 = a.horizontal(2);
+                        var ad = a.diagonal(0,0);
+                        var av0 = a.vertical(0);
+                        var av1 = a.vertical(1);
+                        var av2 = a.vertical(2);
+
+                        var bh0 = b.horizontal(0);
+                        var bh1 = b.horizontal(1);
+                        var bh2 = b.horizontal(2);
+                        var bd = b.diagonal(0,0);
+                        var bv0 = b.vertical(0);
+                        var bv1 = b.vertical(1);
+                        var bv2 = b.vertical(2);
+
+                        if (ah0.length === 3 || ah1.length === 3 || ah2.length === 3  || ad.length === 3
+                                || av0.length === 3 || av1.length === 3 || av2.length === 3) {
+                            console.log('Player 1 won!');
+                            isGameOver = true;
+                        } else if (bh0.length === 3 || bh1.length === 3 || bh2.length === 3  || bd.length === 3
+                                || bv0.length === 3 || bv1.length === 3 || bv2.length === 3) {
+                            console.log('Player 2 won!');
+                            isGameOver = true;
+                        }
+                    }
+				}
+			} else {
+				console.log('Game OV!');
+        isGameOver = true;
+        socket.disconnect();
+			}
+		});
+	</script>
+</body>
+</head>
+</html>
