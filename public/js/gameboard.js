@@ -373,7 +373,6 @@ define([], function() {
 	}
 
 	return{
-		initialize: initialize,
-		board: Board
+		initialize: initialize
 	}
 });

@@ -4,7 +4,8 @@ define(['BoardgameView','text!templates/index.html'],
 			el: $('#content'),
 			render: function(){
 				this.$el.html(indexTemplate);
-			}
+			},
+
 		});
 		return indexView
 	});

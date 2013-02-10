@@ -1,10 +1,9 @@
-define(['BoardgameView', 'gameboard', 'text!templates/game.html', 'Sockets'], 
-	function(BoardgameView, gameboard, gameTemplate, sio) {
+define(['BoardgameView', 'text!templates/game.html', 'Sockets'], 
+	function(BoardgameView, gameTemplate, sio) {
 	
-	var gameView = BoardgameView.extend({
+	var ticTacToeView = BoardgameView.extend({
 		el: $('#content'),
 		render: function() {
-			gameboard.initialize();
 			this.$el.html(gameTemplate);
 			var board = $("#board")[0]
 			board.toBoard({
@@ -27,5 +26,5 @@ define(['BoardgameView', 'gameboard', 'text!templates/game.html', 'Sockets'],
 			var s = sio.connect();
 		}
 	});
-	return gameView;
+	return ticTacToeView;
 });
