@@ -1,10 +1,14 @@
-define(['BoardgameView', 'text!templates/game.html', 'Sockets'], 
-	function(BoardgameView, gameTemplate, sio) {
-	
+define(['BoardgameView', 'text!templates/game.html', 'Sockets'], function(BoardgameView, gameTemplate, sio) {
+
 	var ticTacToeView = BoardgameView.extend({
 		el: $('#content'),
+
+		initialize: function() {
+			this.model.bind('change', this.render, this);
+		},
+		
 		render: function() {
-			this.$el.html(gameTemplate);
+			this.$el.html(_.template(gameTemplate, this.model.toJSON()));
 			var board = $("#board")[0]
 			board.toBoard({
 				cellWidth: 80,
@@ -23,7 +27,7 @@ define(['BoardgameView', 'text!templates/game.html', 'Sockets'],
 				board.drawPiece(e.cell, 'images/home2.png');
 			});
 
-			var s = sio.connect();
+			//var s = sio.connect();
 		}
 	});
 	return ticTacToeView;

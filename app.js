@@ -32,14 +32,28 @@ app.get('/', function(req, res) {
   res.render('index.jade');
 });
 
-app.post('/games', function(req,res){
-  var gameType = req.param('gameType', '');
-  if(gameType==null){
+app.get('/games/:id', function(req, res) {
+  Game.getGameById(req.params.id, function(game) {
+    if(game == null) {
+      res.send(404);
+      return;
+    }
+    var game = {id: game.id, gameType: game.gameType};
+    res.send(JSON.stringify(game));
+  });
+
+
+})
+
+app.post('/games', function(req, res) {
+  var gameType = req.param('gameType', null);
+  if(gameType == null) {
     res.send(400);
     return;
   }
-  Game.createGame(req, function(game){
-    res.send("{id:"+game.id+"}");
+  Game.createGame(gameType, function(game) {
+    var obj = {id: game.id};
+    res.send(JSON.stringify(obj));
   });
 });
 

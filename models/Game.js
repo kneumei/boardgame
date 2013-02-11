@@ -3,13 +3,13 @@ module.exports = function() {
 	var nextId = 0;
 	var games = new Array();
 
-	var createGame = function(gametype, callback){
+	var createGame = function(gameType, callback){
 		var game = {
 			id: nextId,
-			gametype: gametype
+			gameType: gameType
 		}
 		games[nextId] = game
-		gametype = gametype+1;
+		nextId = nextId+1;
 		callback(game);
 	}
 
