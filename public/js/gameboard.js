@@ -4,6 +4,8 @@ define([], function() {
 				var self = this;
 				var board = Object.create(Board);
 				config.el = self;
+				config.offsetTop = this.offsetTop;
+				config.offsetLeft = this.offsetLeft;
 				board.init(config);
 				board.render();
 				self.onCellClick = self.onCellClick ||
@@ -88,6 +90,8 @@ define([], function() {
 			self.useAlgebraicNotation = config.useAlgebraicNotation;
 			self.pieces = config.pieces;
 			self.nonZeroBasedIndex = config.nonZeroBasedIndex;
+			self.offsetX = config.offsetLeft;
+			self.offsetY = config.offsetTop;
 		},
 
 		render: function() {
@@ -311,8 +315,9 @@ define([], function() {
 		getCursorPosition: function(e) {
 			var x, y;
 			if(e.pageX || e.pageY) {
-				x = e.pageX;
-				y = e.pageY;
+				console.log(this.offsetX);
+				x = e.pageX - this.offsetX;
+				y = e.pageY - this.offsetY;
 			} else {
 				x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
 				y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;

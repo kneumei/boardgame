@@ -38,7 +38,19 @@ app.get('/games/:id', function(req, res) {
       res.send(404);
       return;
     }
-    var game = {id: game.id, gameType: game.gameType};
+    var color = null;
+    if(req.session.id == game.player1) {
+      color = "white";
+    }
+    if(req.session.id == game.player2) {
+      color = "black"
+    }
+    var game = {
+      id: game.id,
+      gameType: game.gameType,
+      status: game.status,
+      color: color
+    };
     res.send(JSON.stringify(game));
   });
 
@@ -51,8 +63,10 @@ app.post('/games', function(req, res) {
     res.send(400);
     return;
   }
-  Game.createGame(gameType, function(game) {
-    var obj = {id: game.id};
+  Game.createGame(gameType, req.session.id, function(game) {
+    var obj = {
+      id: game.id
+    };
     res.send(JSON.stringify(obj));
   });
 });

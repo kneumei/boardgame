@@ -28,8 +28,11 @@ define(['views/index', 'views/tictactoe', 'models/GameModel'], function(IndexVie
 			}, function(res) {
 				var obj = JSON.parse(res);
 				var model = new GameModel({id:obj.id});
-				router.changeView(new TictactoeView({model:model}));
-				model.fetch();
+				model.fetch({
+					success: function(model, response){
+						router.changeView(new TictactoeView({model:model}));
+					}
+				});
 			}).error(function() {
 				console.log("fail!");
 			});
