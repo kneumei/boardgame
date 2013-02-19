@@ -53,9 +53,7 @@ app.get('/games/:id', function(req, res) {
     };
     res.send(JSON.stringify(game));
   });
-
-
-})
+});
 
 app.post('/games', function(req, res) {
   var gameType = req.param('gameType', null);
@@ -68,6 +66,22 @@ app.post('/games', function(req, res) {
       id: game.id
     };
     res.send(JSON.stringify(obj));
+  });
+});
+
+app.put('/games/:id', function(req, res) {
+
+  var newGameState = {
+    status : req.param('status','')
+  }
+
+  Game.updateGame(req.params.id, newGameState, req.session.id, function(error) {
+    if(error) {
+      res.send(400);
+      return;
+    }
+    res.send(200);
+    return;
   });
 });
 

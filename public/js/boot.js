@@ -15,5 +15,8 @@ require.config({
 });
 
 require(['Boardgame'], function(Boardgame) {
-  Boardgame.initialize();
+  window.location.hash = 'index';
+  _.extend(Backbone, Backbone.Events)
+  var bg = new Boardgame;
+  Backbone.history.start();
 });

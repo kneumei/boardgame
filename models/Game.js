@@ -9,11 +9,26 @@ module.exports = function() {
 			gameType: gameType,
 			player1: player1,
 			player2: null,
-			status: 'waiting'
+			status: 'WAITING'
 		}
 		games[nextId] = game
 		nextId = nextId+1;
 		callback(game);
+	}
+
+	var updateGame = function(id, newGameState, player, callback){
+		var game = games[id];
+		if(game==null){
+			callback(false);
+			return;
+		}
+		if(game.status=='WAITING' && newGameState.status=='PLAYING'){
+			game.player2 = player;
+			game.status='PLAYING';
+			callback(true);
+			return;
+		}
+		callback(false);
 	}
 
 	var getGameById = function(id, callback){
@@ -22,7 +37,8 @@ module.exports = function() {
 
 	return {
 		createGame: createGame,
-		getGameById: getGameById
+		getGameById: getGameById,
+		updateGame: updateGame
 	}
 
 }

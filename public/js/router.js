@@ -1,47 +1,24 @@
-define(['views/index', 'views/tictactoe', 'models/GameModel'], function(IndexView, TictactoeView, GameModel) {
+define([], function() {
 	var BoardgameRouter = Backbone.Router.extend({
 		currentView: null,
 
 		routes: {
 			"index": "index",
-			"newgame": "createGame",
-			"joingame": "joingame"
-		},
-
-		changeView: function(view) {
-			if(null != this.currentView) {
-				this.currentView.undelegateEvents();
-			}
-			this.currentView = view;
-			this.currentView.render();
+			"createGame": "createGame",
+			"joinGame/:id": "joingame"
 		},
 
 		index: function() {
-			this.changeView(new IndexView());
+			Backbone.trigger('show-index-view');
 		},
 
-		createGame: function() {
-
-			var router = this;
-			$.post('/games', {
-				gameType: 'tic-tac-toe'
-			}, function(res) {
-				var obj = JSON.parse(res);
-				var model = new GameModel({id:obj.id});
-				model.fetch({
-					success: function(model, response){
-						router.changeView(new TictactoeView({model:model}));
-					}
-				});
-			}).error(function() {
-				console.log("fail!");
-			});
-
-		},
-
-		joingame: function() {
-			this.changeView(new TictactoeView())
+		joingame: function(id) {
+			console.log(this)
+			var model = new GameModel({id: id});
+			console.log(model.status);
+			
 		}
+
 	});
 
 	return new BoardgameRouter();
