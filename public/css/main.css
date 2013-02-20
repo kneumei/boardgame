@@ -10,3 +10,8 @@ body {
 form {
   width: 400px;
 }
+
+.section-toggle {
+	cursor: pointer;
+	text-decoration:underline
+}

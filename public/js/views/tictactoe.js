@@ -8,7 +8,8 @@ define(['BoardgameView', 'text!templates/game.html', 'Sockets'], function(Boardg
 		},
 		
 		render: function() {
-			this.$el.html(_.template(gameTemplate, this.model.toJSON()));
+			var data = {data:this.model.toJSON()};
+			this.$el.html(_.template(gameTemplate, data ));
 			var board = $("#board")[0]
 			board.toBoard({
 				cellWidth: 80,

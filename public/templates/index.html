@@ -1,14 +1,19 @@
 <h1> Welcome to Boardgames!</h1>
 
 <p>
-	<button type="button" class="createGame">Create Game</button>
+	<a class="section-toggle" id="toggleCreateGame">Create Game</a>
+	<div id="createGameSection">
+		<label>Your Name: <input type="text" id="name1"/> </label>
+		<button type="button" id="createGame">Create Game</button>
+	</div>
 </p>
 <p>
-	<button type="button" class="joinGame">Join Game</button>
-		<label>
-			Game Id:
-			<input type="text" id="gameId" />
-		</label>
+	<a class="section-toggle" id="toggleJoinGame">Join Game</a>
+	<div id="joinGameSection">
+		<label>Your Name: <input type="text" id="name2"/> </label> <br>
+		<label>	Game Id: <input type="text" id="gameId" /> </label>
+		<button type="button" id="joinGame">Join Game</button>
+	</div>
 </p>
 
 <p class="error" id="error"></p>

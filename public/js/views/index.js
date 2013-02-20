@@ -4,19 +4,35 @@ define(['BoardgameView', 'text!templates/index.html', 'models/GameModel'],
 		el: $('#content'),
 
 		events: {
-			"click .createGame": "createGame",
-			"click .joinGame": "joinGame"
+			"click #toggleCreateGame": "toggleCreateGame",
+			"click #toggleJoinGame":"toggleJoinGame",
+			"click #createGame": "createGame",
+			"click #joinGame": "joinGame"
 		},
 
 
 		render: function() {
 			this.$el.html(indexTemplate);
 			$("#error").hide();
+			$("#createGameSection").hide();
+			$("#joinGameSection").hide();
 		},
+
+		toggleCreateGame: function(){
+			$("#createGameSection").slideToggle();
+			$("#joinGameSection").hide();
+		},
+
+		toggleJoinGame: function(){
+			$("#joinGameSection").slideToggle();
+			$("#createGameSection").hide();
+		},
+
 
 		createGame: function(){
 			var self = this;
-			var model = new GameModel({gameType:'tic-tac-toe'});
+			var name = $("#name1").val();
+			var model = new GameModel({gameType:'tic-tac-toe', player1:name});
 			model.save({},{
 				success: function(){
 					self.gotoGame(model.id);
@@ -31,7 +47,8 @@ define(['BoardgameView', 'text!templates/index.html', 'models/GameModel'],
 
 		joinGame: function(){
 			var gameId = $("#gameId").val();
-			var model = new GameModel({id:gameId, status:"PLAYING"});
+			var name = $("#name2").val();
+			var model = new GameModel({id:gameId, status:"PLAYING", player2:name});
 			var self = this;
 			model.save({},{
 				success: function(){

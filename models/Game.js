@@ -3,12 +3,15 @@ module.exports = function() {
 	var nextId = 0;
 	var games = new Array();
 
-	var createGame = function(gameType, player1, callback){
+	var createGame = function(gameType, playerAlias, sessionId, callback){
 		var game = {
 			id: nextId,
 			gameType: gameType,
-			player1: player1,
-			player2: null,
+			player1:{
+				alias: playerAlias,
+				sessionId: sessionId
+			},
+			player2: {},
 			status: 'WAITING'
 		}
 		games[nextId] = game
@@ -16,14 +19,17 @@ module.exports = function() {
 		callback(game);
 	}
 
-	var updateGame = function(id, newGameState, player, callback){
+	var updateGame = function(id, newGameState, sessionId, callback){
 		var game = games[id];
 		if(game==null){
 			callback(false);
 			return;
 		}
 		if(game.status=='WAITING' && newGameState.status=='PLAYING'){
-			game.player2 = player;
+			game.player2 ={
+				alias: newGameState.player2,
+				sessionId: sessionId
+			};
 			game.status='PLAYING';
 			callback(true);
 			return;

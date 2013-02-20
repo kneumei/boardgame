@@ -38,18 +38,13 @@ app.get('/games/:id', function(req, res) {
       res.send(404);
       return;
     }
-    var color = null;
-    if(req.session.id == game.player1) {
-      color = "white";
-    }
-    if(req.session.id == game.player2) {
-      color = "black"
-    }
+    
     var game = {
       id: game.id,
       gameType: game.gameType,
       status: game.status,
-      color: color
+      player1: game.player1.alias,
+      player2: game.player2.alias
     };
     res.send(JSON.stringify(game));
   });
@@ -61,7 +56,12 @@ app.post('/games', function(req, res) {
     res.send(400);
     return;
   }
-  Game.createGame(gameType, req.session.id, function(game) {
+  var player1 = req.param('player1', null);
+  if(player1 == null) {
+    res.send(400);
+    return;
+  }
+  Game.createGame(gameType, player1, req.session.id, function(game) {
     var obj = {
       id: game.id
     };
@@ -72,7 +72,9 @@ app.post('/games', function(req, res) {
 app.put('/games/:id', function(req, res) {
 
   var newGameState = {
-    status : req.param('status','')
+    status: req.param('status', ''),
+    player1: req.param('player1',''),
+    player2: req.param('player2', '')
   }
 
   Game.updateGame(req.params.id, newGameState, req.session.id, function(error) {
