@@ -1,4 +1,5 @@
-define(['router', 'gameboard', 'views/index','views/tictactoe', 'models/GameModel'], function(router, gameboard, IndexView, TictactoeView, GameModel) {
+define(['router', 'gameboard', 'views/index','views/tictactoe', 'models/GameModel', 'GameSocket'], 
+	function(router, gameboard, IndexView, TictactoeView, GameModel, GameSocket) {
 	var MainApp = Backbone.View.extend({
 
 			currentView: null,
@@ -27,8 +28,10 @@ define(['router', 'gameboard', 'views/index','views/tictactoe', 'models/GameMode
 			},
 
 			showGameView: function(model) {
+				var gameSocket = GameSocket.initialize(model);
 				this.changeView(new TictactoeView({
-					model: model
+					model: model,
+					gameSocket :gameSocket
 				}));
 				router.navigate('games/' + model.id);
 			}

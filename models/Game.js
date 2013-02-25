@@ -13,6 +13,8 @@ module.exports = function() {
 			},
 			player2: {},
 			status: 'WAITING'
+			moves:{},
+			nextMove:null;
 		}
 		games[nextId] = game
 		nextId = nextId+1;
@@ -22,7 +24,7 @@ module.exports = function() {
 	var updateGame = function(id, newGameState, sessionId, callback){
 		var game = games[id];
 		if(game==null){
-			callback(false);
+			callback(true);
 			return;
 		}
 		if(game.status=='WAITING' && newGameState.status=='PLAYING'){
@@ -31,9 +33,35 @@ module.exports = function() {
 				sessionId: sessionId
 			};
 			game.status='PLAYING';
+			game.nextMove=player1
+			callback(false);
+			return;
+		}
+		callback(true);
+	}
+
+	var play = function(id, move, sessionId, callback){
+		var game = games[id];
+		if(game==null){
 			callback(true);
 			return;
 		}
+
+		if(game.status!='PLAYING'){
+			callback(true);
+			return;
+		}
+		if(game.nextMove.sessionId!=sessionId){
+			callback(true);
+			return;
+		}
+
+		if(game.nextMove==game.player1){
+			game.nextMove=player2;
+		}else{
+			game.nextMove=player1;
+		}
+		game.moves.push(move);
 		callback(false);
 	}
 

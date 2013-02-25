@@ -28,6 +28,10 @@ define([], function() {
 						}
 					}
 				}
+				self.calculateOffset = function(){
+					board.offsetX = this.offsetLeft;
+					board.offsetY = this.offsetTop;
+				}
 			}
 		};
 

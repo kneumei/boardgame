@@ -5,6 +5,7 @@ var app = express();
 var io = require('socket.io');
 var utils = require('connect').utils;
 var Session = require('connect').middleware.session.Session;
+var cookie = require('cookie');
 var Game = require('./models/Game')();
 
 // Create an http server
@@ -14,7 +15,7 @@ app.server = http.createServer(app);
 app.sessionStore = new MemoryStore();
 
 app.configure(function() {
-  app.sessionSecret = 'SocialNet secret key';
+  app.sessionSecret = 'secretkey';
   app.set('view engine', 'jade');
   app.use(express.static(__dirname + '/public'));
   app.use(express.limit('1mb'));
@@ -38,7 +39,7 @@ app.get('/games/:id', function(req, res) {
       res.send(404);
       return;
     }
-    
+
     var game = {
       id: game.id,
       gameType: game.gameType,
@@ -65,15 +66,18 @@ app.post('/games', function(req, res) {
     var obj = {
       id: game.id
     };
+    req.session.gameId = game.id
     res.send(JSON.stringify(obj));
   });
 });
 
 app.put('/games/:id', function(req, res) {
 
+  req.session.gameId = req.params.id
+
   var newGameState = {
     status: req.param('status', ''),
-    player1: req.param('player1',''),
+    player1: req.param('player1', ''),
     player2: req.param('player2', '')
   }
 
@@ -88,11 +92,33 @@ app.put('/games/:id', function(req, res) {
 });
 
 var sio = io.listen(app.server);
-
+sio.set('log level', 2);
 sio.configure(function() {
-  sio.sockets.on('connection', function(socket) {
-    console.log("new connection!");
+  sio.set('authorization', function(data, accept) {
+    var signedCookies = cookie.parse(data.headers.cookie);
+    var cookies = utils.parseSignedCookies(signedCookies, app.sessionSecret)
+    data.sessionID = cookies['express.sid'];
+    data.sessionStore = app.sessionStore;
+    data.sessionStore.get(data.sessionID, function(err, session) {
+      if(err || !session) {
+        return accept('Invalid session', false);
+      } else {
+        data.session = new Session(data, session);
+        accept(null, true);
+      }
+    });
   });
+
+});
+
+sio.sockets.on('connection', function(socket) {
+  var session = socket.handshake.session;
+  console.log("Player joined game: " + session.gameId);
+  socket.join(session.gameId);
+  Game.getGameById(session.gameId, function(game) {
+    sio.sockets.in(session.gameId).emit('gamechange')
+  });
+
 });
 
 app.server.listen(8080);
