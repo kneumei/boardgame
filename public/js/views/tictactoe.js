@@ -1,4 +1,5 @@
-define(['BoardgameView', 'text!templates/game.html'], function(BoardgameView, gameTemplate) {
+define(['BoardgameView', 'text!templates/game.html', 'text!templates/gamestatus.html'], 
+	function(BoardgameView, gameTemplate, gameStatusTemplate) {
 
 	var ticTacToeView = BoardgameView.extend({
 		el: $('#content'),
@@ -10,6 +11,7 @@ define(['BoardgameView', 'text!templates/game.html'], function(BoardgameView, ga
 		},
 
 		render: function() {
+			this.$el.html(_.template(gameTemplate, {}));
 			this.renderModel();
 			this.board = $("#board")[0]
 			board.toBoard({
@@ -34,7 +36,7 @@ define(['BoardgameView', 'text!templates/game.html'], function(BoardgameView, ga
 			var data = {
 				data: this.model.toJSON()
 			};
-			this.$el.html(_.template(gameTemplate, data));
+			$("#gamestatus").html(_.template(gameStatusTemplate, data));
 			if(this.board != null) this.board.calculateOffset();
 
 		}
