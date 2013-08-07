@@ -12,9 +12,9 @@ module.exports = function() {
 				sessionId: sessionId
 			},
 			player2: {},
-			status: 'WAITING'
+			status: 'WAITING',
 			moves:{},
-			nextMove:null;
+			nextMove:null
 		}
 		games[nextId] = game
 		nextId = nextId+1;
